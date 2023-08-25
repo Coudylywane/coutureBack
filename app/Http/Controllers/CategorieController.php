@@ -14,8 +14,12 @@ class CategorieController extends Controller
 {
     public function index(Request $request)
     {
-        return Categorie::all();
+        $perPage = $request->input('perPage', 10); // Nombre d'éléments par page
+        $categories = Categorie::paginate($perPage);
+
+        return response()->json($categories);
     }
+    
 /*
     public function store(CategorieRequest $request){
         return Categorie::create($request->all());
@@ -52,6 +56,8 @@ class CategorieController extends Controller
         }
     }
 
+
+
     public function getUnitesForCategorie($categorieId)
     {
         try {
@@ -62,6 +68,73 @@ class CategorieController extends Controller
             return response()->json(['error' => 'Une erreur est survenue lors de la récupération des unités'], 500);
         }
     }
+
+/*     public function destroy($id)
+    {
+        DB::beginTransaction();
+    
+        try {
+            $categorie = Categorie::findOrFail($id);
+            $categorie->delete();
+            
+            // Supprimer également les unités associées à cette catégorie
+            $categorie->unites()->delete();
+            
+            DB::commit();
+            
+            return response()->json(['message' => 'Catégorie et unités supprimées avec succès']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+    
+            return response()->json(['error' => 'Erreur lors de la suppression : ' . $e->getMessage()], 500);
+        }
+    } */
+
+    public function destroy($id)
+    {
+        DB::beginTransaction();
+    
+        try {
+            $categorie = Categorie::findOrFail($id);
+    
+            // Récupérer les IDs des unités associées à cette catégorie dans la table unite_categories
+            $unitesIds = $categorie->uniteCategories->pluck('unite_id')->toArray();
+    
+            // Supprimer les enregistrements d'unités dans la table unite_categories
+            UniteCategorie::where('categorie_id', $categorie->id)->delete();
+    
+            // Supprimer chaque unité individuellement dans la table unites
+            foreach ($unitesIds as $uniteId) {
+                $unite = Unite::findOrFail($uniteId);
+                $unite->delete();
+            }
+    
+            // Supprimer la catégorie
+            $categorie->delete();
+    
+            DB::commit();
+    
+            return response()->json(['message' => 'Catégorie et unités supprimées avec succès']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+    
+            return response()->json(['error' => 'Erreur lors de la suppression : ' . $e->getMessage()], 500);
+        }
+    }
+    
+
+    
+
+
+
+
+    
+
+
+    
+    
+
+
 
 
 }

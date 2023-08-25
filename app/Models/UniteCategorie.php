@@ -16,4 +16,9 @@ class UniteCategorie extends Model
     return $this->belongsTo(Unite::class, 'unite_id');
 }
 
+public function categorie()
+{
+    return $this->belongsTo(Categorie::class, 'categorie_id');
+}
+
 }

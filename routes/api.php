@@ -19,6 +19,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('categories',CategorieController::class)->except(['destroy', 'update']);
+Route::apiResource('categories',CategorieController::class);
+
 Route::get('categories/{categorieId}/unites', 'App\Http\Controllers\CategorieController@getUnitesForCategorie');
+Route::delete('/categories/{id}', 'App\Http\Controllers\CategorieController@destroy');
+
 
