@@ -23,5 +23,4 @@ Route::apiResource('categories',CategorieController::class);
 
 Route::get('categories/{categorieId}/unites', 'App\Http\Controllers\CategorieController@getUnitesForCategorie');
 Route::delete('/categories/{id}', 'App\Http\Controllers\CategorieController@destroy');
-
-
+//Route::get('/all', 'App\Http\Controllers\CategorieController@findAll');

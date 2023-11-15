@@ -19,6 +19,11 @@ class CategorieController extends Controller
 
         return response()->json($categories);
     }
+
+    //     public function findAll(Request $request)
+    // {
+    //    return  Categorie::all();
+    // }
     
 /*
     public function store(CategorieRequest $request){
@@ -44,7 +49,7 @@ class CategorieController extends Controller
                 UniteCategorie::create([
                     'categorie_id' => $categorie->id,
                     'unite_id' => $unite->id,
-                    'conversion' => 0
+                    'conversion' => 1
                 ]);
             }
             DB::commit();
@@ -95,6 +100,7 @@ class CategorieController extends Controller
         DB::beginTransaction();
     
         try {
+            
             $categorie = Categorie::findOrFail($id);
     
             // Récupérer les IDs des unités associées à cette catégorie dans la table unite_categories
@@ -107,6 +113,7 @@ class CategorieController extends Controller
             foreach ($unitesIds as $uniteId) {
                 $unite = Unite::findOrFail($uniteId);
                 $unite->delete();
+                
             }
     
             // Supprimer la catégorie
